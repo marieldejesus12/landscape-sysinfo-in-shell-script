@@ -6,7 +6,7 @@ echo -e "  System information as of $(date)"
 echo -e ""
 echo -e "  System load:\t$(cat /proc/loadavg | cut -d" " -f1)\t\tProcesses:\t\t$(ps aux | wc -l)"
 echo -e "  Usage of /:\t$(df -h / | grep / | awk '{ print $5}') of $(df -h / | grep / | awk '{ print $2}')\tUsers logged in:\t$(users | wc -w)"
-echo -e "  Memory usage:\t$(($(free -m | grep Mem | awk '{ print $3}')*100/$(free -m | grep Mem | awk '{ print $2}')))%\t\tIP address for $(cat /proc/net/route | grep 00000000 | awk '{ print $1}' | uniq):\t$(ip addr show $(cat /proc/net/route | grep 00000000 | awk '{ print $1}' | uniq) | grep 'inet ' | awk '{ print $2}' | cut -d/ -f1)"
+echo -e "  Memory usage:\t$(($(free -m | grep Mem | awk '{ print $3}')*100/$(free -m | grep Mem | awk '{ print $2}')))%\t\tIP address for $(cat /proc/net/route | grep 00000000 | grep -v br- | grep -v docker | awk '{ print $1}' | uniq):\t$(ip addr show $(cat /proc/net/route | grep 00000000 | grep -v br- | grep -v docker | awk '{ print $1}' | uniq) | grep 'inet ' | awk '{ print $2}' | cut -d/ -f1)"
 echo -e "  Swap usage:\t$(($(free -m | grep Swap | awk '{ print $3}')*100/$(free -m | grep Swap | awk '{ print $2}')))%\t\tUptime:\t$(uptime -p)"
 if [ -x /opt/vc/bin/vcgencmd ]; then
   echo -e "  Voltage:\t$(/opt/vc/bin/vcgencmd measure_volts | cut -d= -f2)\t\tTemperature:\t\t$(/opt/vc/bin/vcgencmd measure_temp | cut -d= -f2)"
@@ -19,5 +19,9 @@ fi
 if [ ! -x /usr/bin/lsb_release ]; then
   echo -e ""
   echo -e "Please, install lsb-release package..."
+fi
+if [ ! -x /usr/bin/hostname ]; then
+  echo -e ""
+  echo -e "Please, install inetutils package..."
 fi
 echo -e ""
